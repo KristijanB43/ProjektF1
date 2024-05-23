@@ -1,0 +1,12 @@
+1,2,2,2,Mercedes,2,2
+2,2,2,2,Mercedes,2,2
+3,4,4,4,Ferrari,4,4
+4,Ime,Prezime,Hrv,McLaren,23,33
+5,Ime,Prezime2,gttg,Ferrari,23,55
+6,max,vers,niz,Red Bull,33,55
+8,Kik,Bahnji,Hrva,Mercedes,43,233
+9,leo,cuni,HRva,Ferrari,34,553
+10,ime,prezime,hrvatska,Williams,35,880
+11,lol,lol,lol,Aston Martin,44,345
+12,ime,prezime,hrvatska,Mercedes,66,466
+13,tibor,milkovifvi,gfej,Aston Martin,3,5
