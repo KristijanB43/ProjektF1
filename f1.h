@@ -27,8 +27,8 @@ void unos_vozaca();
 void citanje_vozaca();
 void brisanje_vozaca();
 void azuriraj_podatke();
+void spremi_podatke();
 void sortiraj_vozace();
 void izbornik();
-void ucitaj_podatke();  // Dodano: Funkcija za učitavanje podataka iz datoteke
 
 #endif // F1_H

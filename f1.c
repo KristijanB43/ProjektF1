@@ -35,6 +35,23 @@ void prikazi_timove() {
     }
 }
 
+void spremi_podatke() {
+    FILE* file = fopen(FILENAME, "w");
+    if (file == NULL) {
+        printf("Greska pri otvaranju datoteke.\n");
+        return;
+    }
+
+    for (int i = 0; i < broj_vozaca; i++) {
+        Vozac vozac = vozaci[i];
+        fprintf(file, "%d,%s,%s,%s,%s,%d,%d\n", vozac.id, vozac.ime, vozac.prezime, vozac.drzava, vozac.tim, vozac.dob, vozac.bodovi);
+    }
+
+    fclose(file);
+    printf("Podaci uspjesno azurirani u datoteci.\n");
+    printf("-----------------------------------\n");
+}
+
 void unos_vozaca() {
     if (broj_vozaca >= MAX_VOZACI) {
         printf("Dosegnut maksimalan broj vozaca.\n");
@@ -83,6 +100,8 @@ void unos_vozaca() {
     printf("\n-----------------------------------\n");
     printf("Vozac uspjesno dodan.\n");
     printf("-----------------------------------\n");
+
+    spremi_podatke(); // Spremanje podataka nakon unosa
 }
 
 void citanje_vozaca() {
@@ -91,15 +110,15 @@ void citanje_vozaca() {
         return;
     }
 
-    printf("Lista vozaca:\n");
-    printf("---------------------------------------------------------------------------------------------\n");
-    printf("|   ID   |         Ime        |       Prezime       |     Drzava     | Godine |   Bodovi   |\n");
-    printf("---------------------------------------------------------------------------------------------\n");
+    printf("\n");
+    printf("---------------------------------------------------------------------------------------------------------------\n");
+    printf("|  ID |         Ime        |        Prezime       |     Drzava     |          Tim         | Godine |  Bodovi  |\n");
+    printf("---------------------------------------------------------------------------------------------------------------\n");
     for (int i = 0; i < broj_vozaca; i++) {
         Vozac vozac = vozaci[i];
-        printf("| %6d | %18s | %20s | %14s | %6d | %10d |\n", vozac.id, vozac.ime, vozac.prezime, vozac.drzava, vozac.dob, vozac.bodovi);
+        printf("| %3d | %18s | %20s | %14s | %20s | %6d | %8d |\n", vozac.id, vozac.ime, vozac.prezime, vozac.drzava, vozac.tim, vozac.dob, vozac.bodovi);
     }
-    printf("---------------------------------------------------------------------------------------------\n");
+    printf("---------------------------------------------------------------------------------------------------------------\n");
 }
 
 void brisanje_vozaca() {
@@ -130,25 +149,70 @@ void brisanje_vozaca() {
         printf("Vozac sa ID %d nije pronaden.\n", id);
         printf("-----------------------------------\n");
     }
+
+    spremi_podatke(); // Spremanje podataka nakon brisanja
 }
 
 void azuriraj_podatke() {
-    FILE* file = fopen(FILENAME, "w");
-    if (file == NULL) {
-        printf("Greska pri otvaranju datoteke.\n");
+    citanje_vozaca();
+
+    int id;
+    printf("\nUnesite ID vozaca kojeg zelite azurirati:\n");
+    if (scanf("%d", &id) != 1) {
+        printf("Neispravan unos ID-a.\n");
+        while (getchar() != '\n'); // Čišćenje ulaza
         return;
     }
 
+    int found = 0;
     for (int i = 0; i < broj_vozaca; i++) {
-        Vozac vozac = vozaci[i];
-        fprintf(file, "%d,%s,%s,%s,%s,%d,%d\n", vozac.id, vozac.ime, vozac.prezime, vozac.drzava, vozac.tim, vozac.dob, vozac.bodovi);
+        if (vozaci[i].id == id) {
+            found = 1;
+
+            printf("\nUnesite novo ime vozaca: ");
+            scanf("%s", vozaci[i].ime);
+            printf("Unesite novo prezime vozaca: ");
+            scanf("%s", vozaci[i].prezime);
+            printf("Unesite novu drzavu vozaca: ");
+            scanf("%s", vozaci[i].drzava);
+
+            int izbor_tima;
+            do {
+                prikazi_timove();
+                printf("Unesite broj novog tima (1-10): ");
+                if (scanf("%d", &izbor_tima) != 1 || izbor_tima < 1 || izbor_tima > 10) {
+                    printf("Neispravan unos. Pokusajte ponovo.\n");
+                    while (getchar() != '\n'); // Čišćenje ulaza
+                }
+                else {
+                    strcpy(vozaci[i].tim, timovi[izbor_tima - 1]);
+                    break;
+                }
+            } while (1);
+
+            printf("Unesite novu dob vozaca: ");
+            while (scanf("%d", &vozaci[i].dob) != 1) {
+                printf("Neispravan unos. Unesite ponovo dob: ");
+                while (getchar() != '\n'); // Čišćenje ulaza
+            }
+            printf("Unesite novi broj bodova vozaca: ");
+            while (scanf("%d", &vozaci[i].bodovi) != 1) {
+                printf("Neispravan unos. Unesite ponovo broj bodova: ");
+                while (getchar() != '\n'); // Čišćenje ulaza
+            }
+
+            printf("-----------------------------------\n");
+            printf("Podaci vozaca uspjesno azurirani.\n");
+            printf("-----------------------------------\n");
+            break;
+        }
     }
 
-    fclose(file);
-    printf("\n-----------------------------------\n");
-    printf("Podaci uspjesno azurirani.\n");
-    printf("-----------------------------------\n");
+    if (!found) {
+        printf("Vozac sa ID %d nije pronaden.\n", id);
+    }
 
+    spremi_podatke(); // Spremanje podataka nakon ažuriranja
 }
 
 void ucitaj_podatke() {
@@ -283,28 +347,18 @@ void sortiraj_vozace() {
         return;
     }
 
-    for (int i = 0; i < broj_vozaca; i++) {
-        Vozac vozac = vozaci[i];
-        printf("Lista vozaca:\n");
-        printf("---------------------------------------------------------------------------------------------\n");
-        printf("|   ID   |         Ime        |       Prezime       |     Drzava     | Godine |   Bodovi   |\n");
-        printf("---------------------------------------------------------------------------------------------\n");
-        for (int i = 0; i < broj_vozaca; i++) {
-            Vozac vozac = vozaci[i];
-            printf("| %6d | %18s | %20s | %14s | %6d | %10d |\n", vozac.id, vozac.ime, vozac.prezime, vozac.drzava, vozac.dob, vozac.bodovi);
-        }
-        printf("---------------------------------------------------------------------------------------------\n");  
-    }
+    citanje_vozaca(); // Ispisivanje sortirane liste vozača
+    spremi_podatke(); // Spremanje podataka nakon sortiranja
 }
 
 void izbornik() {
-    ucitaj_podatke(); // Dodano: Učitaj podatke pri pokretanju programa
+    ucitaj_podatke(); //Učitaj podatke pri pokretanju programa
     Opcije izbor;
     do {
         printf("\n\tIzaberite opciju:\n");
         printf("-----------------------------------\n");
         printf("1. Unos novog vozaca\n");
-        printf("2. Citanje svih vozaca\n");
+        printf("2. Prikazi sve vozace\n");
         printf("3. Brisanje vozaca\n");
         printf("4. Azuriraj podatke\n");
         printf("5. Sortiraj vozace\n");
@@ -338,7 +392,6 @@ void izbornik() {
             printf("\n-----------------------------------\n");
             printf("Izlazak iz programa.\n");
             printf("-----------------------------------\n");
-            azuriraj_podatke(); // Dodano: Spremanje podataka pri izlasku iz programa
             break;
         default:
             printf("Neispravan izbor. Pokusajte ponovo.\n");
